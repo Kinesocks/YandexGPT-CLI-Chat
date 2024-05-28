@@ -165,6 +165,8 @@ func getdir_ID() string {
 func messageDecode(response *http.Response) string {
 	var json_response gpt_response
 
+	defer response.Body.Close()
+
 	err := json.NewDecoder(response.Body).Decode(&json_response)
 	if err != nil {
 		log.Fatal(err)
@@ -244,8 +246,6 @@ func postRequest(user_input string) *http.Response {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	//defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK && response.StatusCode != http.StatusAccepted {
 		log.Fatal(response.StatusCode)
