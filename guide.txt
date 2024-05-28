@@ -1,0 +1,8 @@
+Oauth: y0_AgAAAAA71pM4AATuwQAAAAEFCA5YAACK-V_wSOdLtIzjfAckj119GsioGw
+IAM_Token: t1.9euelZqVipaNic_Jyp6czovOkMbMiu3rnpWamY6LipvNzMaTyYyVnJSUyZzl9PdaJWJN-e9-fX6N3fT3GlRfTfnvfn1-jc3n9euelZqSk86Ok4-elsyWxpyZlpGYze_8xeuelZqSk86Ok4-elsyWxpyZlpGYzQ.KW8Rucn6E8QI_CP7yw_3bogesZYGcgvCFvUrbhAaiiY5JlP8QIUJUGNoNllXVLKSYNQvoApvGG12xS8-t70LAA
+Dir ID = b1gm8n2ccbvk7nf87dk2
+
+curl -X POST \-d '{"yandexPassportOauthToken":"y0_AgAAAAA71pM4AATuwQAAAAEFCA5YAACK-V_wSOdLtIzjfAckj119GsioGw"}' \https://iam.api.cloud.yandex.net/iam/v1/tokens
+$yandexPassportOauthToken = "y0_AgAAAAA71pM4AATuwQAAAAEFCA5YAACK-V_wSOdLtIzjfAckj119GsioGw"
+$Body = @{ yandexPassportOauthToken = "$yandexPassportOauthToken" } | ConvertTo-Json -Compress
+Invoke-RestMethod -Method 'POST' -Uri 'https://iam.api.cloud.yandex.net/iam/v1/tokens' -Body $Body -ContentType 'Application/json' | Select-Object -ExpandProperty iamToken
