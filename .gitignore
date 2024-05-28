@@ -1,4 +1,5 @@
 *.zip
 *.exe
 .vscode
-/store/*.*
+/store/*
+!/store/.gitkeep
