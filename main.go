@@ -5,17 +5,19 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 )
 
 const (
 	role2       = "user"
-	stream      = false
+	stream      = true
 	temperature = 0.3
 	maxTokens   = "500"
 	role1       = "system"
@@ -162,18 +164,36 @@ func getdir_ID() string {
 	return string(dir_id)
 }
 
-func messageDecode(response *http.Response) string {
-	var json_response gpt_response
-
+func messageDecode(response *http.Response) {
 	defer response.Body.Close()
+	fmt.Print(">>> ")
 
-	err := json.NewDecoder(response.Body).Decode(&json_response)
-	if err != nil {
-		log.Fatal(err)
+	decoder := json.NewDecoder(response.Body)
+	bufStr := ""
+
+	for {
+		var json_response gpt_response
+
+		if err := decoder.Decode(&json_response); err == io.EOF {
+			break
+		} else if err != nil {
+			log.Fatalf("Failed to decode JSON: %v", err)
+		}
+
+		messageText := json_response.Result.Alternatives[0].Message.Text
+		renderedTokens := strings.ReplaceAll(messageText, bufStr, "")
+		bufStr += renderedTokens
+		fmt.Print(renderedTokens)
 	}
 
-	message := json_response.Result.Alternatives[len(json_response.Result.Alternatives)-1].Message.Text
-	return message
+	fmt.Println()
+	//}
+	// err := json.NewDecoder(response.Body).Decode(&json_response)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+
+	//message := json_response.Result.Alternatives[len(json_response.Result.Alternatives)-1].Message.Text
 
 }
 
@@ -262,7 +282,7 @@ func main() {
 		for {
 			user_input := getUserInput()
 			gptRes := postRequest(user_input)
-			fmt.Println(">>>", messageDecode(gptRes))
+			messageDecode(gptRes)
 		}
 	}()
 	<-sig
